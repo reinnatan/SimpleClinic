@@ -1,25 +1,60 @@
 <html>
     <head>
+    
+      <script>
+        $(document).ready(function(){
+
+          var confirmDialog = $("#dialog-pasien").dialog({
+            autoOpen: false,
+            modal: true,
+            buttons: {
+                "Yes": function() {
+                    $(this).dialog("close");
+                    var namaPasien = $("#namaPasien").val();
+                    var alamatPasien = $("#alamat").val();
+                    var ktpPasien = $("#ktp").val();
+                    var noHpPasien = $("#noHp").val();
+                    
+                },
+                "No": function() {
+                    $(this).dialog("close");
+                }
+            }
+          });
+
+          $("#simpanPasien").click(function(){
+            confirmDialog.dialog("open");
+          })
+
+        });
+      </script>
+
     </head>
 
     <body>
-        <form>
+
+        <!-- Hidden Confirmation Dialog -->
+        <div id="dialog-pasien" title="Confirm Save">
+          <p>Are you sure you want to save this data?</p>
+        </div>
+
+        <div>
             <div class="form-group p-2">
-              <input type="input" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nama Pasien">
+              <input type="input" class="form-control" id="namaPasien" aria-describedby="emailHelp" placeholder="Nama Pasien">
             </div>
             <div class="form-group p-2">
-              <input type="input" class="form-control" id="exampleInputPassword1" placeholder="Alamat">
+              <input type="input" class="form-control" id="alamat" placeholder="Alamat">
             </div>
             <div class="form-group p-2">
-              <input type="input" class="form-control" id="exampleInputPassword1" placeholder="Nomor KTP">
+              <input type="input" class="form-control" id="ktp" placeholder="Nomor KTP">
             </div>
             <div class="form-group p-2">
-              <input type="input" class="form-control" id="exampleInputPassword1" placeholder="Nomor HP">
+              <input type="input" class="form-control" id="noHp" placeholder="Nomor HP">
             </div>
             <div class="col-6 p-2">
-              <button type="submit" class="btn btn-primary">Simpan</button>
-              <button type="submit" class="btn btn-secondary">Cancel</button>
+              <button type="button" class="btn btn-primary" id="simpanPasien">Simpan</button>
+              <button type="button" class="btn btn-secondary">Cancel</button>
             </div>
-          </form>
+          </div>
     </body>
 </html>
