@@ -5,6 +5,7 @@ import (
 	"html/template"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/session"
 )
 
 type User struct {
@@ -18,19 +19,22 @@ type User struct {
 func main() {
 
 	app := fiber.New()
+	var store = session.New()
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		//content := ""
 		//return c.Render("./public/dist/pages/index.html", fiber.Map{"Content": content})
+		sess, _ := store.Get(c)
+
+		sess.Destroy()
 		return c.SendFile("./public/index.html")
 	})
 
 	app.Get("/section/:name", func(c *fiber.Ctx) error {
-
 		sectionName := c.Params("name")
-		content := ""
-		title := ""
-		section := ""
+		content := "Halaman dashboard"
+		title := "Dashboard"
+		section := "Dashboard"
 
 		switch sectionName {
 		case "dashboard":
@@ -56,7 +60,6 @@ func main() {
 			section = "Dokter"
 			renderedHTML := buf.String()
 			content = string(renderedHTML)
-
 		case "pasien":
 			tmpl, err := template.ParseFiles("./public/dist/pages/pasien.html")
 			if err != nil {
@@ -145,15 +148,56 @@ func main() {
 		return c.Send(c.Response().Body())
 	})
 
-	app.Post("/login", func(c *fiber.Ctx) error {
-		payload := new(User)
-		if err := c.BodyParser(payload); err != nil {
-			return err
+	app.All("/login", func(c *fiber.Ctx) error {
+		session, err := store.Get(c)
+		if session.Get("user") == "admin" {
+			content := "Halaman dashboard"
+			title := "Dashboard"
+			section := "Dashboard"
+
+			errParse := c.Render("./public/dist/pages/index.html",
+				fiber.Map{
+					"Content": content,
+					"Title":   title,
+					"Section": section,
+				})
+			if errParse != nil {
+				return errParse
+			}
+
+			c.Set("Content-Type", "text/html")
+			return c.Send(c.Response().Body())
 		}
 
-		if payload.Username == "admin" && payload.Password == "admin" {
-			return c.SendFile("./public/dist/pages/index.html")
+		var payload User
+		if err := c.BodyParser(&payload); err != nil {
+			return c.SendFile("./public/index.html")
 		}
+
+		if err == nil {
+			if payload.Username == "admin" && payload.Password == "admin" {
+				session.Set("user", "admin")
+				session.Save()
+
+				content := "Halaman dashboard"
+				title := "Dashboard"
+				section := "Dashboard"
+
+				errParse := c.Render("./public/dist/pages/index.html",
+					fiber.Map{
+						"Content": content,
+						"Title":   title,
+						"Section": section,
+					})
+				if errParse != nil {
+					return errParse
+				}
+
+				c.Set("Content-Type", "text/html")
+				return c.Send(c.Response().Body())
+			}
+		}
+
 		return c.SendFile("./public/index.html")
 	})
 
