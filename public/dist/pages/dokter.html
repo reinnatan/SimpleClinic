@@ -1,25 +1,58 @@
 <html>
     <head>
+        <script>
+          $(document).ready(function(){
+
+            var confirmDialog = $("#dialog-doctor").dialog({
+              autoOpen: false,
+              modal: true,
+              buttons: {
+                "Yes":function(){
+                    $(this).dialog("close");
+                    var doctorName = $("#doctorName").val();
+                    var doctorAddress = $("#doctorAddress").val();
+                    var doctorPhone = $("#doctorPhone").val();
+                    var doctorPoliType = $("#doctorPoliType").val();
+                },
+                "No": function(){
+                  $(this).dialog("close");
+                }
+              }
+            });
+
+            $("#simpanDoctor").click(function(){
+              confirmDialog.dialog("open");
+            })
+
+          });
+        </script>
     </head>
 
     <body>
+
+        <!-- Hidden Confirmation Dialog -->
+        <div id="dialog-doctor" title="Confirm Save">
+          <p>Are you sure you want to save this data?</p>
+        </div>
+
+
         <form>
             
             <div class="form-group p-2">
-              <input type="input" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nama Dokter">
+              <input type="input" class="form-control" id="doctorName" aria-describedby="emailHelp" placeholder="Doctor Name">
             </div>
             <div class="form-group p-2">
-              <input type="input" class="form-control" id="exampleInputPassword1" placeholder="Alamat">
+              <input type="input" class="form-control" id="doctorAddress" placeholder="Address">
             </div>
             <div class="form-group p-2">
-              <input type="input" class="form-control" id="exampleInputPassword1" placeholder="No. HP">
+              <input type="input" class="form-control" id="doctorPhone" placeholder="Phone Number">
             </div>
             <div class="form-group p-2">
-              <input type="input" class="form-control" id="exampleInputPassword1" placeholder="Poli">
+              <input type="input" class="form-control" id="polyType" placeholder="Poli Type">
             </div>
             <div class="col-6 p-2">
-              <button type="submit" class="btn btn-primary">Simpan</button>
-              <button type="submit" class="btn btn-secondary">Cancel</button>
+              <button id="simpanDoctor" type="button" class="btn btn-primary">Simpan</button>
+              <button type="button" class="btn btn-secondary">Cancel</button>
             </div>
           </form>
     </body>

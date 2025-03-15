@@ -63,7 +63,13 @@ func SectionAdminMenu(c *fiber.Ctx) error {
 		}
 
 		//parsing data to template
-		data := map[string]string{}
+		polis, err := GetPoli(c)
+		if err != nil {
+			return err
+		}
+		data := fiber.Map{
+			"Polis": polis,
+		}
 
 		var buf bytes.Buffer
 		err = tmpl.Execute(&buf, data)
@@ -122,4 +128,8 @@ func SectionAdminMenu(c *fiber.Ctx) error {
 
 	c.Set("Content-Type", "text/html")
 	return c.Send(c.Response().Body())
+}
+
+func AddDoctor(c *fiber.Ctx) error {
+	return nil
 }

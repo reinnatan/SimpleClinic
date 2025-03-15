@@ -3,13 +3,11 @@ package main
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
+	"reinnatan.com/database"
+	"reinnatan.com/models"
+	"reinnatan.com/request"
 	"reinnatan.com/routes"
 )
-
-type User struct {
-	Username string
-	Password string
-}
 
 //ref design
 //https://www.figma.com/design/abG5Bvxa9mRuYpUpUwNXff/Design-WEB-Polyclinic?node-id=0-1&p=f
@@ -17,15 +15,35 @@ type User struct {
 func main() {
 
 	app := fiber.New()
+
+	// CORS Middleware (Allows requests from frontend)
+	app.Use(func(c *fiber.Ctx) error {
+		c.Set("Access-Control-Allow-Origin", "*")
+		c.Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		c.Set("Access-Control-Allow-Headers", "Content-Type")
+		if c.Method() == "OPTIONS" {
+			return c.SendStatus(200)
+		}
+		return c.Next()
+	})
+
 	var store = session.New()
+
+	//grouping controller to admin
+	routes.AdminRoutes(app)
+
+	//connect database
+	database.ConnectDB()
+
+	//Auto migrate models
+	database.DB.AutoMigrate(&models.Doctor{})
+	database.DB.AutoMigrate(&models.Poli{})
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		sess, _ := store.Get(c)
 		sess.Destroy()
 		return c.SendFile("./public/index.html")
 	})
-
-	routes.AdminRoutes(app)
 
 	app.All("/login", func(c *fiber.Ctx) error {
 		session, err := store.Get(c)
@@ -48,7 +66,7 @@ func main() {
 			return c.Send(c.Response().Body())
 		}
 
-		var payload User
+		var payload request.User
 		if err := c.BodyParser(&payload); err != nil {
 			return c.SendFile("./public/index.html")
 		}

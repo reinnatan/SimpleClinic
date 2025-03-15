@@ -1,19 +1,103 @@
 <html>
     <head>
+      <script>
+         function updatePolis(polisId){
+            
+          }
+
+          function deletePolis(polisId){
+            if (confirm("Are you sure you want to delete this user?")) {
+                $.ajax({
+                    url: "/poli/delete/" + polisId,
+                    type: "DELETE",
+                    success: function(response) {
+                        alert(response.message);
+                        $("#polis-"+polisId).remove(); // Remove row from table
+                    },
+                    error: function(err) {
+                        alert("Error deleting user");
+                    }
+                });
+            }
+          }
+
+
+        $(document).ready(function(){
+          
+
+          //var row ="<tr><th scope='row'>"+poli.id+"</th><td>"+poli.poliName+"</td><td>"+poli.poliDescription+"</td><td></td></tr>";
+          var confirmDialog = $("#dialog-poli").dialog({
+            autoOpen:false,
+            modal:true,
+            buttons: {
+              "Yes": function(){
+                $(this).dialog("close");
+
+                var poliData ={
+                  poliName: $("#poliName").val(),
+                  poliDescription: $("#poliDescription").val()
+                }
+
+                $.post("http://localhost:3000/poli/add", poliData, function(data){
+                    alert("poli berhasil disimpan")
+                    $("#poliName").val("");
+                    $("#poliDescription").val("");
+                }).fail(function(){
+                    alert("error add data");
+                    $("#poliName").val("");
+                    $("#poliDescription").val("");
+                });
+              
+              },
+              No: function(){
+                $(this).dialog("close");
+              }
+            }
+          });
+
+          $("#simpanPoli").click(function(){
+            confirmDialog.dialog("open");
+          });
+          
+        })
+      </script>
     </head>
 
     <body>
+        <!-- Hidden Confirmation Dialog -->
+        <div id="dialog-poli" title="Confirm Save">
+          <p>Are you sure you want to save this data?</p>
+        </div>
+
+
         <form>
             <div class="form-group p-2">
-              <input type="input" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nama Poli">
+              <input type="input" class="form-control" id="poliName" aria-describedby="" placeholder="Nama Poli">
             </div>
             <div class="form-group p-2">
-              <input type="input" class="form-control" id="exampleInputPassword1" placeholder="Keterangan">
+              <input type="input" class="form-control" id="poliDescription" placeholder="Keterangan">
             </div>
             <div class="col-6 p-2">
-              <button type="submit" class="btn btn-primary">Simpan</button>
-              <button type="submit" class="btn btn-secondary">Cancel</button>
+              <button type="button" id="simpanPoli" class="btn btn-primary">Simpan</button>
+              <button type="button" id="closePoli" class="btn btn-secondary">Cancel</button>
             </div>
           </form>
+
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Poli Name</th>
+                <th scope="col">Poli Description</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{range .Polis}}
+              <tr id="polis-{{.ID}}"><th scope='row'>{{.ID}}</th><td>{{.PoliName}}</td><td>{{.PoliDescription}}</td><td><button onclick="updatePolis( {{ .ID }} )" class="btn btn-success"  role="button">Update</button>&nbsp;<button class="btn btn-danger" onclick="deletePolis( {{ .ID }} )" role="button">Delete</button></td></tr>
+              {{end}}
+            </tbody>
+          </table>
+
     </body>
 </html>
