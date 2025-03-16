@@ -1,38 +1,19 @@
 <html>
     <head>
+      <style>
+      </style>
+
+
       <script>
-         function updatePolis(polisId){
-            
-          }
-
-          function deletePolis(polisId){
-            if (confirm("Are you sure you want to delete this user?")) {
-                $.ajax({
-                    url: "/poli/delete/" + polisId,
-                    type: "DELETE",
-                    success: function(response) {
-                        alert(response.message);
-                        $("#polis-"+polisId).remove(); // Remove row from table
-                    },
-                    error: function(err) {
-                        alert("Error deleting user");
-                    }
-                });
-            }
-          }
-
+         var confirmDialogUpdate;
 
         $(document).ready(function(){
-          
-
-          //var row ="<tr><th scope='row'>"+poli.id+"</th><td>"+poli.poliName+"</td><td>"+poli.poliDescription+"</td><td></td></tr>";
           var confirmDialog = $("#dialog-poli").dialog({
             autoOpen:false,
             modal:true,
             buttons: {
               "Yes": function(){
                 $(this).dialog("close");
-
                 var poliData ={
                   poliName: $("#poliName").val(),
                   poliDescription: $("#poliDescription").val()
@@ -42,10 +23,12 @@
                     alert("poli berhasil disimpan")
                     $("#poliName").val("");
                     $("#poliDescription").val("");
+                    window.location.href = "http://localhost:3000/section/poli";
                 }).fail(function(){
                     alert("error add data");
                     $("#poliName").val("");
                     $("#poliDescription").val("");
+                    window.location.href = "http://localhost:3000/section/poli";
                 });
               
               },
@@ -55,15 +38,96 @@
             }
           });
 
+          confirmDialog.prev(".ui-dialog-titlebar").css("background","lightblue");
+
           $("#simpanPoli").click(function(){
             confirmDialog.dialog("open");
           });
+
+
+          //dialog update
+          confirmDialogUpdate = $("#dialog-poli-update").dialog({
+            autoOpen:false,
+            modal:true,
+            buttons:{
+              "Yes" : function(){
+                var poliId = $("#userId").val();
+
+                var poliData ={
+                  poliName: $("#poliNameUpdate").val(),
+                  poliDescription: $("#poliDesc").val()
+                }
+
+                $.ajax({
+                    type: 'PUT',
+                    url: "http://localhost:3000/poli/update/"+poliId,
+                    contentType: 'application/json',
+                    data: JSON.stringify(poliData), // access in body
+                }).done(function () {
+                    alert("poli berhasil diupdate")
+                    $("#poliNameUpdate").val("");
+                    $("#poliDesc").val("");
+                    window.location.href = "http://localhost:3000/section/poli";
+                }).fail(function (msg) {
+                  alert("error add data");
+                    $("#poliNameUpdate").val("");
+                    $("#poliDesc").val("");
+                    window.location.href = "http://localhost:3000/section/poli";
+                });
+                $(this).dialog("close");
+              },
+              "No" : function(){
+                 $(this).dialog("close");
+              }
+            }
+          });
+
+          confirmDialogUpdate.prev(".ui-dialog-titlebar").css("background","lightblue");
+
+          $("#updatePoli").click(function(){
+            confirmDialogUpdate.dialog("open");
+            var tempId = $(this).attr("tempval");
+            let poliName = $(this).closest("tr").find("td:eq(0)").text();
+            let poliDesc = $(this).closest("tr").find("td:eq(1)").text();
+            $("#userId").val(tempId);
+            $("#poliNameUpdate").val(poliName);
+            $("#poliDesc").val(poliDesc);
+          });
+
+          $("#deletePoli").click(function(){
+            if (confirm("Are you sure you want to delete this user?")) {
+                var poliId = $(this).attr("tempval");
+                $.ajax({
+                    url: "/poli/delete/" + poliId,
+                    type: "DELETE",
+                    success: function(response) {
+                        alert(response.message);
+                        window.location.href = "http://localhost:3000/section/poli";
+                    },
+                    error: function(err) {
+                        alert("Error deleting user");
+                    }
+                });
+            }
+            
+          });
+          
           
         })
       </script>
     </head>
 
     <body>
+
+        <!--Hidden Update Dialog-->
+        <div id="dialog-poli-update" title="Confirm Update">
+          <h2>Update User</h2>
+          <input type="hidden" id="userId">
+          <input type="text" id="poliNameUpdate" placeholder="PoliName"/>&nbsp;
+          <input type="text" id="poliDesc" placeholder="Poli Description"/>
+        </div>
+
+
         <!-- Hidden Confirmation Dialog -->
         <div id="dialog-poli" title="Confirm Save">
           <p>Are you sure you want to save this data?</p>
@@ -94,7 +158,7 @@
             </thead>
             <tbody>
               {{range .Polis}}
-              <tr id="polis-{{.ID}}"><th scope='row'>{{.ID}}</th><td>{{.PoliName}}</td><td>{{.PoliDescription}}</td><td><button onclick="updatePolis( {{ .ID }} )" class="btn btn-success"  role="button">Update</button>&nbsp;<button class="btn btn-danger" onclick="deletePolis( {{ .ID }} )" role="button">Delete</button></td></tr>
+              <tr id="polis-{{.ID}}"><th scope='row'>{{.ID}}</th><td>{{.PoliName}}</td><td>{{.PoliDescription}}</td><td><button tempval="{{ .ID }}" id="updatePoli" class="btn btn-success"  role="button">Update</button>&nbsp;<button class="btn btn-danger" tempval="{{ .ID }}" id="deletePoli" role="button">Delete</button></td></tr>
               {{end}}
             </tbody>
           </table>

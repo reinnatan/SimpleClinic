@@ -12,4 +12,5 @@ func AdminRoutes(app *fiber.App) {
 	poliGroup := app.Group("/poli")
 	poliGroup.Post("/add", controllers.AddPoli)
 	poliGroup.Delete("/delete/:id", controllers.DeletePoli)
+	poliGroup.Put("/update/:id", controllers.UpdatePoli)
 }
