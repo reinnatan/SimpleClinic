@@ -20,7 +20,7 @@ func AddMedicine(c *fiber.Ctx) error {
 		return c.Status(503).JSON(fiber.Map{"error": "Couldn't create medicine"})
 	}
 
-	return c.JSON(medicine)
+	return c.JSON(fiber.Map{"success": "Success create medicine"})
 }
 
 func UpdateMedicine(c *fiber.Ctx) error {
@@ -32,7 +32,7 @@ func UpdateMedicine(c *fiber.Ctx) error {
 	}
 
 	database.DB.Where("id=?", id).First(&medicineSelected)
-	database.DB.Model(&medicine).Updates(models.Medicine{Name: medicineSelected.Name, Package: medicineSelected.Package, Price: medicine.Price})
+	database.DB.Model(&medicine).Updates(models.Medicine{MedicineName: medicineSelected.MedicineName, MedicinePackage: medicineSelected.MedicinePackage, MedicinePrice: medicine.MedicinePrice})
 	return c.JSON(fiber.Map{"message": "successfully updated"})
 }
 

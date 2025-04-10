@@ -5,7 +5,7 @@
 
 
       <script>
-         var confirmDialogUpdate;
+        var confirmDialogUpdate;
 
         $(document).ready(function(){
           var confirmDialog = $("#dialog-poli").dialog({
@@ -20,7 +20,7 @@
                 }
 
                 $.post("http://localhost:3000/poli/add", poliData, function(data){
-                    alert("poli berhasil disimpan")
+                    alert(data.success);
                     $("#poliName").val("");
                     $("#poliDescription").val("");
                     window.location.href = "http://localhost:3000/section/poli";

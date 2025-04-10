@@ -1,0 +1,167 @@
+<html>
+    <head>
+      <script>
+        $(document).ready(function(){
+
+          //dialog add
+          var confirmDialog = $("#dialog-medicine").dialog({
+            autoOpen:false,
+            modal:true,
+            buttons: {
+              "Yes": function(){
+                $(this).dialog("close");
+                var medicineData ={
+                  medicineName: $("#medicineName").val(),
+                  medicinePackage: $("#medicinePackage").val(),
+                  medicinePrice: $("#medicinePrice").val()
+                }
+
+               
+                $.post("http://localhost:3000/medicine/add", medicineData, function(data){
+                    alert(data.success);
+                    $("#medicineName").val(""),
+                    $("#medicinePackage").val(""),
+                    $("#medicinePrice").val("")
+                    window.location.href = "http://localhost:3000/section/medicine";
+                }).fail(function(){
+                    alert("error add medicine");
+                    window.location.href = "http://localhost:3000/section/medicine";
+                });
+                
+              },
+              No: function(){
+                $(this).dialog("close");
+              }
+            }
+          });
+
+          confirmDialog.prev(".ui-dialog-titlebar").css("background","lightblue");
+
+          $("#saveMedicine").click(function(){
+            confirmDialog.dialog("open");
+          });
+
+
+          //dialog update
+          confirmDialogUpdate = $("#dialog-medicine-update").dialog({
+            autoOpen:false,
+            modal:true,
+            buttons:{
+              "Yes" : function(){
+                var poliId = $("#userId").val();
+
+                var poliData ={
+                  poliName: $("#poliNameUpdate").val(),
+                  poliDescription: $("#poliDesc").val()
+                }
+
+                $.ajax({
+                    type: 'PUT',
+                    url: "http://localhost:3000/medicine/update/"+poliId,
+                    contentType: 'application/json',
+                    data: JSON.stringify(poliData), // access in body
+                }).done(function () {
+                    alert("poli berhasil diupdate")
+                    $("#poliNameUpdate").val("");
+                    $("#poliDesc").val("");
+                    window.location.href = "http://localhost:3000/section/medicine";
+                }).fail(function (msg) {
+                  alert("error add data");
+                    $("#poliNameUpdate").val("");
+                    $("#poliDesc").val("");
+                    window.location.href = "http://localhost:3000/section/medicine";
+                });
+                $(this).dialog("close");
+              },
+              "No" : function(){
+                 $(this).dialog("close");
+              }
+            }
+          });
+
+          confirmDialogUpdate.prev(".ui-dialog-titlebar").css("background","lightblue");
+
+          $("#updatePoli").click(function(){
+            confirmDialogUpdate.dialog("open");
+            var tempId = $(this).attr("tempval");
+            let poliName = $(this).closest("tr").find("td:eq(0)").text();
+            let poliDesc = $(this).closest("tr").find("td:eq(1)").text();
+            $("#userId").val(tempId);
+            $("#poliNameUpdate").val(poliName);
+            $("#poliDesc").val(poliDesc);
+          });
+
+          $("#deletePoli").click(function(){
+            if (confirm("Are you sure you want to delete this user?")) {
+                var poliId = $(this).attr("tempval");
+                $.ajax({
+                    url: "/poli/delete/" + poliId,
+                    type: "DELETE",
+                    success: function(response) {
+                        alert(response.message);
+                        window.location.href = "http://localhost:3000/section/medicine";
+                    },
+                    error: function(err) {
+                        alert("Error deleting user");
+                    }
+                });
+            }
+            
+          });
+          
+          
+        })
+      </script>
+
+    </head>
+
+    <body>
+          <!--Hidden Update Dialog-->
+          <div id="dialog-medicine-update" title="Confirm Update">
+            <h2>Update Medicine</h2>
+            <input type="hidden" id="medicineId">
+            <input type="text" id="medicineName" placeholder="Medicine Name"/>&nbsp;
+            <input type="text" id="medicinePack" placeholder="Medicine Pack"/>
+            <input type="number" id="medicinePrice" placeholder="Medicine Price"/>
+          </div>
+  
+  
+          <!-- Hidden Confirmation Dialog -->
+          <div id="dialog-medicine" title="Confirm Save">
+            <p>Are you sure you want to save this data?</p>
+          </div>
+
+        <form>
+            <div class="form-group p-2">
+              <input type="input" class="form-control" id="medicineName" aria-describedby="medicineName" placeholder="Medicine Name">
+            </div>
+            <div class="form-group p-2">
+              <input type="input" class="form-control" id="medicinePackage" placeholder="Kemasan">
+            </div>
+            <div class="form-group p-2">
+              <input type="input" class="form-control" id="medicinePrice" placeholder="Harga">
+            </div>
+            <div class="col-6 p-2">
+              <button type="button" id="saveMedicine" class="btn btn-primary">Simpan</button>
+              <button type="submit" class="btn btn-secondary">Cancel</button>
+            </div>
+          </form>
+
+
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Poli Name</th>
+                <th scope="col">Poli Description</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{range .Polis}}
+              <tr id="polis-{{.ID}}"><th scope='row'>{{.ID}}</th><td>{{.PoliName}}</td><td>{{.PoliDescription}}</td><td><button tempval="{{ .ID }}" id="updatePoli" class="btn btn-success"  role="button">Update</button>&nbsp;<button class="btn btn-danger" tempval="{{ .ID }}" id="deletePoli" role="button">Delete</button></td></tr>
+              {{end}}
+            </tbody>
+          </table>
+    </body>
+</html>

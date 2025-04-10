@@ -81,8 +81,8 @@ func SectionAdminMenu(c *fiber.Ctx) error {
 		renderedHTML := buf.String()
 		content = string(renderedHTML)
 
-	case "obat":
-		tmpl, err := template.ParseFiles("./public/dist/pages/obat.html")
+	case "medicine":
+		tmpl, err := template.ParseFiles("./public/dist/pages/medicine.html")
 		if err != nil {
 			return err
 		}

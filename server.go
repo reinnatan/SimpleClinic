@@ -36,8 +36,10 @@ func main() {
 	database.ConnectDB()
 
 	//Auto migrate models
+	//database.DB.Migrator().DropTable(&models.Medicine{})
 	database.DB.AutoMigrate(&models.Doctor{})
 	database.DB.AutoMigrate(&models.Poli{})
+	database.DB.AutoMigrate(&models.Medicine{})
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		sess, _ := store.Get(c)
