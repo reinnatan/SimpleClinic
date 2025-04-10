@@ -44,3 +44,14 @@ func DeleteMedicine(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{"message": "User deleted successfully"})
 }
+
+// function for get medicine from database
+func GetMedicine(c *fiber.Ctx) ([]models.Medicine, error) {
+	var medicine []models.Medicine
+	result := database.DB.Order("id ASC").Find(&medicine)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return medicine, nil
+}

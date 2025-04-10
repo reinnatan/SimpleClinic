@@ -158,8 +158,8 @@
               </tr>
             </thead>
             <tbody>
-              {{range .Polis}}
-              <tr id="polis-{{.ID}}"><th scope='row'>{{.ID}}</th><td>{{.PoliName}}</td><td>{{.PoliDescription}}</td><td><button tempval="{{ .ID }}" id="updatePoli" class="btn btn-success"  role="button">Update</button>&nbsp;<button class="btn btn-danger" tempval="{{ .ID }}" id="deletePoli" role="button">Delete</button></td></tr>
+              {{range .Medicines}}
+              <tr id="polis-{{.ID}}"><th scope='row'>{{.ID}}</th><td>{{.MedicineName}}</td><td>{{.MedicinePackage}}</td><td>{{.MedicinePrice}}</td><td><button tempval="{{ .ID }}" id="updatePoli" class="btn btn-success"  role="button">Update</button>&nbsp;<button class="btn btn-danger" tempval="{{ .ID }}" id="deletePoli" role="button">Delete</button></td></tr>
               {{end}}
             </tbody>
           </table>

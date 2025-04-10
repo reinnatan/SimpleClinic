@@ -87,8 +87,15 @@ func SectionAdminMenu(c *fiber.Ctx) error {
 			return err
 		}
 
+		medicines, err := GetMedicine(c)
+		if err != nil {
+			return err
+		}
+
 		//parsing data to template
-		data := map[string]string{}
+		data := fiber.Map{
+			"Medicines": medicines,
+		}
 
 		var buf bytes.Buffer
 		err = tmpl.Execute(&buf, data)
