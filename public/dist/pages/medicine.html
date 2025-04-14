@@ -84,7 +84,7 @@
 
           confirmDialogUpdate.prev(".ui-dialog-titlebar").css("background","lightblue");
 
-          $("#updateMedicine").click(function(){
+          $(".btn-success").on("click",function(){
             confirmDialogUpdate.dialog("open");
             var tempId = $(this).attr("tempval");
             let medicineName = $(this).closest("tr").find("td:eq(0)").text();
@@ -96,7 +96,7 @@
             $("#medicinePriceUpdate").val(medicinePrice);
           });
 
-          $("#deleteMedicine").click(function(){
+          $(".btn-danger").on("click", function(){
             if (confirm("Are you sure you want to delete this user?")) {
                 var medicineId = $(this).attr("tempval");
                 $.ajax({
@@ -165,7 +165,7 @@
             </thead>
             <tbody>
               {{range .Medicines}}
-              <tr id="medicine-{{.ID}}"><th scope='row'>{{.ID}}</th><td>{{.MedicineName}}</td><td>{{.MedicinePackage}}</td><td>{{.MedicinePrice}}</td><td><button tempval="{{ .ID }}" id="updateMedicine" class="btn btn-success"  role="button">Update</button>&nbsp;<button class="btn btn-danger" tempval="{{ .ID }}" id="deleteMedicine" role="button">Delete</button></td></tr>
+              <tr id="medicine-{{.ID}}"><th scope='row'>{{.ID}}</th><td>{{.MedicineName}}</td><td>{{.MedicinePackage}}</td><td>{{.MedicinePrice}}</td><td><button tempval="{{ .ID }}" class="btn btn-success"  role="button">Update</button>&nbsp;<button class="btn btn-danger" tempval="{{ .ID }}" role="button">Delete</button></td></tr>
               {{end}}
             </tbody>
           </table>
