@@ -18,6 +18,6 @@ func AdminRoutes(app *fiber.App) {
 	//routes for medicine
 	medicineGroup := app.Group("/medicine")
 	medicineGroup.Post("/add", controllers.AddMedicine)
-	medicineGroup.Post("/delete/:id", controllers.DeleteMedicine)
-	medicineGroup.Post("/update/:id", controllers.UpdateMedicine)
+	medicineGroup.Delete("/delete/:id", controllers.DeleteMedicine)
+	medicineGroup.Put("/update/:id", controllers.UpdateMedicine)
 }

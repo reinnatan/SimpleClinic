@@ -28,17 +28,17 @@ func UpdateMedicine(c *fiber.Ctx) error {
 	medicine := new(models.Medicine)
 	var medicineSelected models.Medicine
 	if err := c.BodyParser((medicine)); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid Request"})
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	database.DB.Where("id=?", id).First(&medicineSelected)
-	database.DB.Model(&medicine).Updates(models.Medicine{MedicineName: medicineSelected.MedicineName, MedicinePackage: medicineSelected.MedicinePackage, MedicinePrice: medicine.MedicinePrice})
+	database.DB.Model(&medicineSelected).Updates(models.Medicine{MedicineName: medicine.MedicineName, MedicinePackage: medicine.MedicinePackage, MedicinePrice: medicine.MedicinePrice})
 	return c.JSON(fiber.Map{"message": "successfully updated"})
 }
 
 func DeleteMedicine(c *fiber.Ctx) error {
 	id, _ := strconv.ParseUint(c.Params("id"), 10, 64)
-	result := database.DB.Delete(models.Poli{ID: id})
+	result := database.DB.Delete(models.Medicine{ID: id})
 	if result.Error != nil {
 		return c.Status(500).SendString("Failed to delete user")
 	}

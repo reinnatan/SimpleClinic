@@ -48,27 +48,30 @@
             modal:true,
             buttons:{
               "Yes" : function(){
-                var poliId = $("#userId").val();
-
-                var poliData ={
-                  poliName: $("#poliNameUpdate").val(),
-                  poliDescription: $("#poliDesc").val()
+                var medicineId = $("#medicineId").val();
+                var medicineData ={
+                  medicineName: $("#medicineNameUpdate").val(),
+                  medicinePackage: $("#medicinePackUpdate").val(),
+                  medicinePrice: parseFloat($("#medicinePriceUpdate").val())
                 }
 
                 $.ajax({
                     type: 'PUT',
-                    url: "http://localhost:3000/medicine/update/"+poliId,
+                    url: "http://localhost:3000/medicine/update/"+medicineId,
                     contentType: 'application/json',
-                    data: JSON.stringify(poliData), // access in body
+                    data: JSON.stringify(medicineData), // access in body
                 }).done(function () {
-                    alert("poli berhasil diupdate")
-                    $("#poliNameUpdate").val("");
-                    $("#poliDesc").val("");
+                    alert("medicine berhasil diupdate")
+                    $("#medicineNameUpdate").val("");
+                    $("#medicinePackUpdate").val("");
+                    $("#medicinePriceUpdate").val("");
                     window.location.href = "http://localhost:3000/section/medicine";
                 }).fail(function (msg) {
-                  alert("error add data");
-                    $("#poliNameUpdate").val("");
-                    $("#poliDesc").val("");
+                    console.log(JSON.stringify(msg));
+                    alert("error add data"+JSON.stringify(msg));
+                    $("#medicineNameUpdate").val("");
+                    $("#medicinePackUpdate").val("");
+                    $("#medicinePriceUpdate").val("");
                     window.location.href = "http://localhost:3000/section/medicine";
                 });
                 $(this).dialog("close");
@@ -81,28 +84,30 @@
 
           confirmDialogUpdate.prev(".ui-dialog-titlebar").css("background","lightblue");
 
-          $("#updatePoli").click(function(){
+          $("#updateMedicine").click(function(){
             confirmDialogUpdate.dialog("open");
             var tempId = $(this).attr("tempval");
-            let poliName = $(this).closest("tr").find("td:eq(0)").text();
-            let poliDesc = $(this).closest("tr").find("td:eq(1)").text();
-            $("#userId").val(tempId);
-            $("#poliNameUpdate").val(poliName);
-            $("#poliDesc").val(poliDesc);
+            let medicineName = $(this).closest("tr").find("td:eq(0)").text();
+            let medicinePackage = $(this).closest("tr").find("td:eq(1)").text();
+            let medicinePrice = $(this).closest("tr").find("td:eq(2)").text();
+            $("#medicineId").val(tempId);
+            $("#medicineNameUpdate").val(medicineName);
+            $("#medicinePackUpdate").val(medicinePackage);
+            $("#medicinePriceUpdate").val(medicinePrice);
           });
 
-          $("#deletePoli").click(function(){
+          $("#deleteMedicine").click(function(){
             if (confirm("Are you sure you want to delete this user?")) {
-                var poliId = $(this).attr("tempval");
+                var medicineId = $(this).attr("tempval");
                 $.ajax({
-                    url: "/poli/delete/" + poliId,
+                    url: "/medicine/delete/" + medicineId,
                     type: "DELETE",
                     success: function(response) {
                         alert(response.message);
                         window.location.href = "http://localhost:3000/section/medicine";
                     },
                     error: function(err) {
-                        alert("Error deleting user");
+                        alert("Error deleting medcine");
                     }
                 });
             }
@@ -120,9 +125,9 @@
           <div id="dialog-medicine-update" title="Confirm Update">
             <h2>Update Medicine</h2>
             <input type="hidden" id="medicineId"/>
-            <input type="text" id="medicineName" placeholder="Medicine Name"/>&nbsp;
-            <input type="text" id="medicinePack" placeholder="Medicine Pack"/>&nbsp;
-            <input type="number" id="medicinePrice" placeholder="Medicine Price"/>&nbsp;
+            <input type="text" id="medicineNameUpdate" placeholder="Medicine Name"/>&nbsp;&nbsp;
+            <input type="text" id="medicinePackUpdate" placeholder="Medicine Pack"/>&nbsp;&nbsp;
+            <input type="number" id="medicinePriceUpdate" placeholder="Medicine Price"/>&nbsp;&nbsp;
           </div>
   
   
@@ -160,7 +165,7 @@
             </thead>
             <tbody>
               {{range .Medicines}}
-              <tr id="polis-{{.ID}}"><th scope='row'>{{.ID}}</th><td>{{.MedicineName}}</td><td>{{.MedicinePackage}}</td><td>{{.MedicinePrice}}</td><td><button tempval="{{ .ID }}" id="updatePoli" class="btn btn-success"  role="button">Update</button>&nbsp;<button class="btn btn-danger" tempval="{{ .ID }}" id="deletePoli" role="button">Delete</button></td></tr>
+              <tr id="medicine-{{.ID}}"><th scope='row'>{{.ID}}</th><td>{{.MedicineName}}</td><td>{{.MedicinePackage}}</td><td>{{.MedicinePrice}}</td><td><button tempval="{{ .ID }}" id="updateMedicine" class="btn btn-success"  role="button">Update</button>&nbsp;<button class="btn btn-danger" tempval="{{ .ID }}" id="deleteMedicine" role="button">Delete</button></td></tr>
               {{end}}
             </tbody>
           </table>
